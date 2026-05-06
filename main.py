@@ -6,6 +6,7 @@ from typing import Optional
 import os
 import sqlite3
 
+import bcrypt
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -13,12 +14,13 @@ from fastapi.responses import FileResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr, Field
+from dotenv import load_dotenv
 
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
+load_dotenv(BASE_DIR / ".env")
 DATABASE = Path(os.getenv("DATABASE_PATH", str(BASE_DIR / "academy.db")))
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development").strip().lower()
 SECRET_KEY = os.getenv("SECRET_KEY", "").strip()
@@ -34,15 +36,25 @@ if not SECRET_KEY:
 
 
 def parse_cors_origins() -> list[str]:
-    raw = os.getenv("CORS_ORIGINS", "").strip()
-    if raw:
-        return [origin.strip() for origin in raw.split(",") if origin.strip()]
-    return [
+    defaults = [
         "http://localhost:8000",
         "http://127.0.0.1:8000",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:5501",
+        "http://127.0.0.1:5501",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
     ]
+    raw = os.getenv("CORS_ORIGINS", "").strip()
+    if raw:
+        configured = [origin.strip() for origin in raw.split(",") if origin.strip()]
+        merged: list[str] = []
+        for origin in [*configured, *defaults]:
+            if origin not in merged:
+                merged.append(origin)
+        return merged
+    return defaults
 
 
 app = FastAPI(
@@ -60,7 +72,6 @@ app.add_middleware(
 )
 app.add_middleware(GZipMiddleware, minimum_size=500)
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 STATIC_DIR.mkdir(exist_ok=True)
@@ -434,12 +445,23 @@ class Token(BaseModel):
     token_type: str
 
 
+def validate_password_length(password: str) -> None:
+    if len(password.encode("utf-8")) > 72:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be 72 bytes or fewer.",
+        )
+
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    if len(plain_password.encode("utf-8")) > 72:
+        return False
+    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
 
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    validate_password_length(password)
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -547,6 +569,7 @@ def health() -> dict:
 @app.post("/auth/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(user: UserCreate):
     email = normalize_email(str(user.email))
+    validate_password_length(user.password)
     with db_connection() as conn:
         cursor = conn.cursor()
         hashed_password = get_password_hash(user.password)

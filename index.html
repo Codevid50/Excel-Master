@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="api-base-url" content="">
     <title>Excel Tutoring Center | Master the Spreadsheet</title>
+    <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -142,6 +143,39 @@
             align-items: center;
             gap: 15px;
             position: relative
+        }
+
+        .user-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px 8px 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .14);
+            color: #fff;
+            cursor: pointer;
+            transition: all .3s
+        }
+
+        .user-trigger:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, .12)
+        }
+
+        .user-trigger-label {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1
+        }
+
+        .user-trigger-label strong {
+            font-size: 14px
+        }
+
+        .user-trigger-label small {
+            font-size: 11px;
+            opacity: .75
         }
 
         .user-avatar {
@@ -1559,7 +1593,7 @@
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="loginPassword" required placeholder="********">
+                    <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="********">
                 </div>
                 <button type="submit" class="btn-primary" style="width:100%;justify-content:center">
                     <i class="fas fa-sign-in-alt"></i> Sign In
@@ -1577,7 +1611,7 @@
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="regPassword" required minlength="6" placeholder="Min 6 characters">
+                    <input type="password" id="regPassword" required minlength="6" autocomplete="new-password" placeholder="Min 6 characters">
                 </div>
                 <button type="submit" class="btn-primary" style="width:100%;justify-content:center">
                     <i class="fas fa-user-plus"></i> Create Account
@@ -1650,10 +1684,22 @@
         const API_URL = (() => {
             const configured = document.querySelector('meta[name="api-base-url"]')?.content?.trim();
             if (configured) return configured.replace(/\/$/, "");
-            return window.location.protocol === "file:" ? "http://localhost:8000" : window.location.origin;
+            const { protocol, hostname, origin, port } = window.location;
+            const isLocalHost = ["localhost", "127.0.0.1"].includes(hostname);
+            const isStaticDevPort = ["5500", "5501", "3000", "4173", "5173"].includes(port);
+            if (protocol === "file:" || (isLocalHost && isStaticDevPort)) {
+                return "http://localhost:8000";
+            }
+            return origin;
         })();
 
-        let currentUser = null;
+        let currentUser = (() => {
+            try {
+                return JSON.parse(localStorage.getItem("currentUser") || "null");
+            } catch {
+                return null;
+            }
+        })();
         let currentToken = localStorage.getItem("token") || null;
         let selectedCourseId = null;
         let myEnrollments = [];
@@ -1751,7 +1797,13 @@
 
             navAuth.innerHTML = `
                 <div class="user-menu">
-                    <div class="user-avatar" onclick="toggleDropdown()">${escapeHtml(getInitials(currentUser.full_name))}</div>
+                    <button type="button" class="user-trigger" onclick="toggleDropdown()">
+                        <div class="user-avatar">${escapeHtml(getInitials(currentUser.full_name))}</div>
+                        <span class="user-trigger-label">
+                            <strong>${escapeHtml(currentUser.full_name)}</strong>
+                            <small>My Account</small>
+                        </span>
+                    </button>
                     <div class="user-dropdown" id="userDropdown">
                         <p><strong>${escapeHtml(currentUser.full_name)}</strong><br><small>${escapeHtml(currentUser.email)}</small><br><small>ID: ${escapeHtml(currentUser.id)}</small></p>
                         ${adminButton}
@@ -1759,6 +1811,16 @@
                         <button type="button" onclick="logout()" class="danger"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
                     </div>
                 </div>`;
+        }
+
+        function persistCurrentUser(user) {
+            currentUser = user;
+            if (user) {
+                localStorage.setItem("currentUser", JSON.stringify(user));
+            } else {
+                localStorage.removeItem("currentUser");
+            }
+            updateNavForUser();
         }
 
         async function handleLogin(event) {
@@ -1776,6 +1838,17 @@
                 });
                 currentToken = data.access_token;
                 localStorage.setItem("token", currentToken);
+                if (!currentUser) {
+                    persistCurrentUser({
+                        id: "Loading...",
+                        email,
+                        full_name: email.split("@")[0],
+                        role: "student",
+                        phone: null,
+                        created_at: "",
+                        can_access_admin: false
+                    });
+                }
                 await loadUser();
                 await loadMyEnrollments();
                 renderCourses();
@@ -1807,7 +1880,8 @@
                 });
                 currentToken = login.access_token;
                 localStorage.setItem("token", currentToken);
-                await loadUser();
+                persistCurrentUser(created);
+                await loadUser(created);
                 await loadMyEnrollments();
                 renderCourses();
                 closeModal("authModal");
@@ -1817,32 +1891,35 @@
             }
         }
 
-        async function loadUser() {
+        async function loadUser(fallbackUser = null) {
             if (!currentToken) {
-                currentUser = null;
-                updateNavForUser();
+                persistCurrentUser(null);
                 return;
             }
 
             try {
-                currentUser = await apiFetch("/auth/me", {
+                const user = await apiFetch("/auth/me", {
                     headers: { Authorization: `Bearer ${currentToken}` }
                 });
-                updateNavForUser();
+                persistCurrentUser(user);
             } catch (error) {
+                if (fallbackUser) {
+                    persistCurrentUser(fallbackUser);
+                    console.error("User profile load error", error);
+                    return;
+                }
                 logout(false);
             }
         }
 
         function logout(showMessage = true) {
             currentToken = null;
-            currentUser = null;
+            persistCurrentUser(null);
             myEnrollments = [];
             adminData = null;
             adminAccessKey = "";
             localStorage.removeItem("token");
             sessionStorage.removeItem("adminAccessKey");
-            updateNavForUser();
             renderCourses();
             closeDropdown();
             if (showMessage) showToast("Signed out successfully", "info");
@@ -2150,8 +2227,8 @@
 
         document.addEventListener("click", (event) => {
             const dropdown = document.getElementById("userDropdown");
-            const avatar = document.querySelector(".user-avatar");
-            if (dropdown && avatar && !dropdown.contains(event.target) && !avatar.contains(event.target)) {
+            const trigger = document.querySelector(".user-trigger");
+            if (dropdown && trigger && !dropdown.contains(event.target) && !trigger.contains(event.target)) {
                 dropdown.classList.remove("active");
             }
         });
