@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="api-base-url" content="">
+    <title>Excel Tutoring Center | Master the Spreadsheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* [Keeping your existing CSS styles exactly as provided] */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #f59e0b;
+            --accent: #ec4899;
+            --dark: #0f172a;
+            --g1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --g2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --g3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: #fff;
+            overflow-x: hidden
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all .4s;
+            background: transparent
+        }
+
+        .navbar.scrolled {
+            background: rgba(15, 23, 42, .95);
+            backdrop-filter: blur(20px);
+            padding: 15px 5%;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, .3)
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--g1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            transition: transform .3s;
+            text-decoration: none
+        }
+
+        .logo:hover {
+            transform: scale(1.05)
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            position: relative;
+            transition: color .3s
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--g1);
+            transition: width .3s
+        }
+
+        .nav-links a:hover::after {
+            width: 100%
+        }
+
+        .nav-links a:hover {
+            color: var(--primary)
+        }
+
+        .nav-cta {
+            padding: 12px 28px;
+            background: var(--g1);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s;
+            font-family: 'Poppins', sans-serif
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, .4)
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--g1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, .2);
+            transition: all .3s
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+            border-color: var(--primary)
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: rgba(26, 26, 46, .95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 16px;
+            padding: 15px;
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all .3s;
+            z-index: 1001
+        }
+
+        .user-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0)
+        }
+
+        .user-dropdown p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .6);
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, .1)
+        }
+
+        .user-dropdown button {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, .05);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all .3s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px
+        }
+
+        .user-dropdown button:hover {
+            background: rgba(255, 255, 255, .1)
+        }
+
+        .user-dropdown button.danger {
+            color: #ef4444
+        }
+
+        .user-dropdown button.danger:hover {
+            background: rgba(239, 68, 68, .1)
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 100px 5% 50px
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: .4;
+            animation: float 20s infinite ease-in-out
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            top: -10%;
+            left: -10%
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -5s
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            top: 40%;
+            left: 60%;
+            animation-delay: -10s
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1)
+            }
+
+            25% {
+                transform: translate(50px, -50px) scale(1.1)
+            }
+
+            50% {
+                transform: translate(-30px, 30px) scale(.9)
+            }
+
+            75% {
+                transform: translate(20px, 20px) scale(1.05)
+            }
+        }
+
+        .floating-cards {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1
+        }
+
+        .float-card {
+            position: absolute;
+            background: rgba(255, 255, 255, .05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: floatCard 15s infinite ease-in-out
+        }
+
+        .float-card i {
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--g1)
+        }
+
+        .float-card-1 {
+            top: 20%;
+            left: 5%
+        }
+
+        .float-card-2 {
+            top: 60%;
+            right: 5%;
+            animation-delay: -5s
+        }
+
+        .float-card-3 {
+            bottom: 20%;
+            left: 10%;
+            animation-delay: -10s
+        }
+
+        @keyframes floatCard {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg)
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(2deg)
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 900px
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 50px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            animation: fadeInDown 1s ease
+        }
+
+        .hero-badge i {
+            color: var(--secondary);
+            margin-right: 8px
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 72px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            animation: fadeInUp 1s ease .2s both
+        }
+
+        .hero h1 span {
+            background: var(--g1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, .7);
+            margin-bottom: 40px;
+            line-height: 1.8;
+            animation: fadeInUp 1s ease .4s both
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            animation: fadeInUp 1s ease .6s both
+        }
+
+        .btn-primary {
+            padding: 16px 40px;
+            background: var(--g1);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, .5)
+        }
+
+        .btn-secondary {
+            padding: 16px 40px;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, .3);
+            border-radius: 50px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, .1);
+            border-color: #fff;
+            transform: translateY(-3px)
+        }
+
+        .btn-enroll {
+            padding: 10px 24px;
+            background: var(--g1);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s;
+            font-family: 'Poppins', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .btn-enroll:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, .4)
+        }
+
+        .btn-enrolled {
+            padding: 10px 24px;
+            background: rgba(34, 197, 94, .2);
+            border: 1px solid rgba(34, 197, 94, .3);
+            border-radius: 50px;
+            color: #22c55e;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: default;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .stats {
+            padding: 80px 5%;
+            position: relative
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            transition: all .4s ease;
+            position: relative;
+            overflow: hidden
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--g1);
+            opacity: 0;
+            transition: opacity .4s;
+            z-index: 0
+        }
+
+        .stat-card:hover::before {
+            opacity: .1
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102, 126, 234, .3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .3)
+        }
+
+        .stat-card>* {
+            position: relative;
+            z-index: 1
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: var(--g1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            transition: transform .4s
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg)
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 800;
+            background: var(--g1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: rgba(255, 255, 255, .6);
+            font-weight: 500
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px
+        }
+
+        .section-title h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 700;
+            margin-bottom: 15px
+        }
+
+        .section-title h2 span {
+            background: var(--g2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .section-title p {
+            color: rgba(255, 255, 255, .6);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto
+        }
+
+        .courses {
+            padding: 100px 5%
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all .4s ease;
+            position: relative
+        }
+
+        .course-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, .2);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, .4)
+        }
+
+        .course-image {
+            height: 200px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .course-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, var(--dark), transparent)
+        }
+
+        .course-img-1 {
+            background: var(--g1)
+        }
+
+        .course-img-2 {
+            background: var(--g2)
+        }
+
+        .course-img-3 {
+            background: var(--g3)
+        }
+
+        .course-img-4 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)
+        }
+
+        .course-img-5 {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%)
+        }
+
+        .course-img-6 {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)
+        }
+
+        .course-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 6px 16px;
+            background: rgba(0, 0, 0, .3);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 2
+        }
+
+        .course-content {
+            padding: 30px
+        }
+
+        .course-content h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            font-weight: 600
+        }
+
+        .course-content p {
+            color: rgba(255, 255, 255, .6);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 20px
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, .1)
+        }
+
+        .course-meta span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, .5)
+        }
+
+        .course-meta span i {
+            color: var(--secondary)
+        }
+
+        .course-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--secondary)
+        }
+
+        .features {
+            padding: 100px 5%;
+            position: relative
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 25px;
+            padding: 30px;
+            background: rgba(255, 255, 255, .02);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, .05);
+            transition: all .4s ease
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, .05);
+            transform: translateX(10px);
+            border-color: rgba(102, 126, 234, .2)
+        }
+
+        .feature-icon {
+            min-width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: var(--g1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: transform .4s
+        }
+
+        .feature-item:hover .feature-icon {
+            transform: rotate(10deg) scale(1.1)
+        }
+
+        .feature-text h4 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: 600
+        }
+
+        .feature-text p {
+            color: rgba(255, 255, 255, .6);
+            font-size: 14px;
+            line-height: 1.7
+        }
+
+        .testimonials {
+            padding: 100px 5%;
+            overflow: hidden
+        }
+
+        .testimonial-track {
+            display: flex;
+            gap: 30px;
+            animation: scroll 30s linear infinite;
+            width: max-content
+        }
+
+        .testimonial-track:hover {
+            animation-play-state: paused
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0)
+            }
+
+            100% {
+                transform: translateX(-50%)
+            }
+        }
+
+        .testimonial-card {
+            min-width: 400px;
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all .4s ease
+        }
+
+        .testimonial-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, .2)
+        }
+
+        .testimonial-stars {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            font-size: 18px
+        }
+
+        .testimonial-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, .8);
+            margin-bottom: 25px;
+            font-style: italic
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--g1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px
+        }
+
+        .author-info h5 {
+            font-size: 16px;
+            font-weight: 600
+        }
+
+        .author-info span {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .5)
+        }
+
+        .cta {
+            padding: 120px 5%;
+            text-align: center;
+            position: relative
+        }
+
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 40px;
+            padding: 80px 40px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--g1);
+            opacity: .05;
+            animation: rotate 20s linear infinite
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        .cta-box>* {
+            position: relative;
+            z-index: 1
+        }
+
+        .cta h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 700;
+            margin-bottom: 20px
+        }
+
+        .cta p {
+            color: rgba(255, 255, 255, .6);
+            font-size: 18px;
+            margin-bottom: 40px;
+            line-height: 1.8
+        }
+
+        .footer {
+            padding: 60px 5% 30px;
+            border-top: 1px solid rgba(255, 255, 255, .05)
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto 60px
+        }
+
+        .footer-brand h3 {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--g1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px
+        }
+
+        .footer-brand p {
+            color: rgba(255, 255, 255, .5);
+            line-height: 1.8;
+            font-size: 14px
+        }
+
+        .footer-links h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 25px
+        }
+
+        .footer-links ul {
+            list-style: none
+        }
+
+        .footer-links li {
+            margin-bottom: 12px
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, .5);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all .3s;
+            display: inline-block
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            transform: translateX(5px)
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px
+        }
+
+        .social-links a {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            transition: all .3s;
+            border: 1px solid rgba(255, 255, 255, .1)
+        }
+
+        .social-links a:hover {
+            background: var(--g1);
+            transform: translateY(-5px);
+            border-color: transparent
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, .05);
+            color: rgba(255, 255, 255, .3);
+            font-size: 14px
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all .8s ease
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all .3s ease
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible
+        }
+
+        .modal {
+            background: #1a1a2e;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 420px;
+            position: relative;
+            transform: translateY(30px) scale(.95);
+            transition: all .3s ease;
+            max-height: 90vh;
+            overflow-y: auto
+        }
+
+        .modal-wide {
+            max-width: 600px
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1)
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, .5);
+            font-size: 28px;
+            cursor: pointer;
+            transition: color .3s
+        }
+
+        .modal-close:hover {
+            color: #fff
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
+            padding-bottom: 15px
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, .5);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all .3s;
+            font-family: 'Poppins', sans-serif
+        }
+
+        .modal-tab.active {
+            background: var(--g1);
+            color: #fff
+        }
+
+        .modal-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, .05);
+            color: #fff
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px
+        }
+
+        .auth-form.hidden {
+            display: none
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, .7);
+            font-weight: 500
+        }
+
+        .form-group label i {
+            color: var(--primary);
+            width: 16px
+        }
+
+        .form-group input {
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            transition: all .3s;
+            outline: none
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, .08);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .1)
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, .3)
+        }
+
+        .form-error {
+            color: #ef4444;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 5px;
+            min-height: 20px
+        }
+
+        .enroll-header {
+            text-align: center;
+            margin-bottom: 25px
+        }
+
+        .enroll-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: var(--g1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 28px
+        }
+
+        .enroll-header h3 {
+            font-size: 22px;
+            margin-bottom: 8px
+        }
+
+        .enroll-price {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 5px
+        }
+
+        .success-check {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, .2);
+            border: 2px solid rgba(34, 197, 94, .3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 28px;
+            color: #22c55e;
+            animation: scaleIn .5s ease
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0)
+            }
+
+            50% {
+                transform: scale(1.2)
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--g1);
+            border-radius: 10px;
+            transition: width .5s ease
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .5);
+            margin-top: 5px;
+            text-align: right
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            background: #1a1a2e;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 10001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all .4s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, .4)
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1
+        }
+
+        .toast i {
+            font-size: 18px
+        }
+
+        .toast.success {
+            border-left: 4px solid #22c55e
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--primary)
+        }
+
+        .my-course-card {
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 15px;
+            transition: all .3s
+        }
+
+        .my-course-card:hover {
+            border-color: rgba(255, 255, 255, .15)
+        }
+
+        .my-course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px
+        }
+
+        .my-course-header h4 {
+            font-size: 18px;
+            font-weight: 600
+        }
+
+        .my-course-header .status {
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, .15);
+            color: #22c55e
+        }
+
+        .status-completed {
+            background: rgba(99, 102, 241, .15);
+            color: var(--primary)
+        }
+
+        .hidden {
+            display: none !important
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo">ExcelMaster</a>
+        <ul class="nav-links">
+            <li><a href="#courses">Courses</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#testimonials">Success Stories</a></li>
+        </ul>
+        <div id="navAuth">
+            <button class="nav-cta" onclick="openAuthModal()">Sign In</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="floating-cards">
+            <div class="float-card float-card-1"><i class="fas fa-table"></i>
+                <div><strong>VLOOKUP</strong><br><small>Advanced Level</small></div>
+            </div>
+            <div class="float-card float-card-2"><i class="fas fa-chart-pie"></i>
+                <div><strong>Pivot Tables</strong><br><small>Data Mastery</small></div>
+            </div>
+            <div class="float-card float-card-3"><i class="fas fa-code"></i>
+                <div><strong>VBA Macros</strong><br><small>Automation</small></div>
+            </div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge"><i class="fas fa-star"></i> #1 Excel Training Hub in 2026</div>
+            <h1>Master Data with <span>Professional</span> Excel Coaching</h1>
+            <p>Go from spreadsheet novice to data wizard. Our expert-led courses cover everything from basic formulas to
+                complex financial modeling and automation.</p>
+            <div class="hero-buttons">
+                <a href="#courses" class="btn-primary">Explore Courses <i class="fas fa-arrow-right"></i></a>
+                <button class="btn-secondary" onclick="window.scrollTo({top: 800, behavior: 'smooth'})">Learn
+                    More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats reveal">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-number" id="statStudents">15k+</div>
+                <div class="stat-label">Students Taught</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-book"></i></div>
+                <div class="stat-number" id="statCourses">45+</div>
+                <div class="stat-label">Curated Courses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-award"></i></div>
+                <div class="stat-number" id="statSatisfaction">98%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="courses" id="courses">
+        <div class="section-title reveal">
+            <h2>Our <span>Premium</span> Courses</h2>
+            <p>Hand-crafted curriculum designed for immediate workplace impact.</p>
+        </div>
+        <div class="courses-grid" id="coursesGrid">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-title reveal">
+            <h2>Why Choose <span>ExcelMaster</span>?</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-item reveal">
+                <div class="feature-icon"><i class="fas fa-laptop-code"></i></div>
+                <div class="feature-text">
+                    <h4>Interactive Labs</h4>
+                    <p>Real-world datasets to practice formulas in a controlled environment.</p>
+                </div>
+            </div>
+            <div class="feature-item reveal">
+                <div class="feature-icon"><i class="fas fa-certificate"></i></div>
+                <div class="feature-text">
+                    <h4>Industry Certification</h4>
+                    <p>Get recognized by top employers with our verified certificates.</p>
+                </div>
+            </div>
+            <div class="feature-item reveal">
+                <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                <div class="feature-text">
+                    <h4>Expert Support</h4>
+                    <p>Access our community of Excel experts 24/7 for complex problem solving.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials" id="testimonials">
+        <div class="section-title reveal">
+            <h2>Success <span>Stories</span></h2>
+            <p>Recent student feedback pulled directly from the platform.</p>
+        </div>
+        <div class="courses-grid" id="testimonialsGrid">
+            <div class="testimonial-card reveal">
+                <div class="testimonial-stars">Loading testimonials...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta reveal">
+        <div class="cta-box">
+            <h2>Ready to transform your career?</h2>
+            <p>Join thousands of professionals who have upgraded their data skills with our proven methodology.</p>
+            <button class="btn-primary" onclick="openAuthModal()">Get Started For Free</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h3>ExcelMaster</h3>
+                <p>Empowering professionals to conquer data with confidence and precision through world-class
+                    spreadsheet education.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="#courses">Courses</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Certificates</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 ExcelMaster Tutoring Center. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
+            <div class="modal-tabs">
+                <button class="modal-tab active" onclick="switchTab('login')" id="tab-login">Sign In</button>
+                <button class="modal-tab" onclick="switchTab('register')" id="tab-register">Sign Up</button>
+            </div>
+            <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="loginPassword" required placeholder="********">
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <p class="form-error" id="loginError"></p>
+            </form>
+            <form id="registerForm" class="auth-form hidden" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="regName" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="regEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="regPassword" required minlength="6" placeholder="Min 6 characters">
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                <p class="form-error" id="registerError"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enroll Modal -->
+    <div id="enrollModal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('enrollModal')">&times;</button>
+            <div class="enroll-header">
+                <div class="enroll-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h3 id="enrollCourseTitle">Course Name</h3>
+                <p id="enrollCoursePrice" class="enroll-price">$199</p>
+            </div>
+            <div id="enrollLoginPrompt">
+                <p>Please sign in to enroll in this course.</p>
+                <button class="btn-primary" onclick="openAuthModal();closeModal('enrollModal')"
+                    style="width:100%;justify-content:center;margin-top:15px">
+                    <i class="fas fa-sign-in-alt"></i> Sign In to Enroll
+                </button>
+            </div>
+            <div id="enrollConfirm" class="hidden">
+                <p>You are about to enroll in this course. Click below to confirm.</p>
+                <button class="btn-primary" onclick="confirmEnrollment()"
+                    style="width:100%;justify-content:center;margin-top:15px">
+                    <i class="fas fa-check-circle"></i> Confirm Enrollment
+                </button>
+            </div>
+            <div id="enrollSuccess" class="hidden">
+                <div class="success-check"><i class="fas fa-check"></i></div>
+                <h4>Enrollment Successful!</h4>
+                <p>You can track your progress in My Courses.</p>
+                <button class="btn-secondary" onclick="closeModal('enrollModal')"
+                    style="width:100%;justify-content:center;margin-top:15px">
+                    <i class="fas fa-thumbs-up"></i> Got it!
+                </button>
+            </div>
+            <p class="form-error" id="enrollError"></p>
+        </div>
+    </div>
+
+    <!-- My Courses Modal -->
+    <div id="myCoursesModal" class="modal-overlay">
+        <div class="modal modal-wide">
+            <button class="modal-close" onclick="closeModal('myCoursesModal')">&times;</button>
+            <h3 style="margin-bottom:20px"><i class="fas fa-book-reader" style="color:var(--primary)"></i> My Courses
+            </h3>
+            <div id="myCoursesList">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="adminModal" class="modal-overlay">
+        <div class="modal modal-wide">
+            <button class="modal-close" onclick="closeModal('adminModal')">&times;</button>
+            <h3 style="margin-bottom:20px"><i class="fas fa-database" style="color:var(--primary)"></i> Admin Data</h3>
+            <div id="adminDataContent"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const API_URL = (() => {
+            const configured = document.querySelector('meta[name="api-base-url"]')?.content?.trim();
+            if (configured) return configured.replace(/\/$/, "");
+            return window.location.protocol === "file:" ? "http://localhost:8000" : window.location.origin;
+        })();
+
+        let currentUser = null;
+        let currentToken = localStorage.getItem("token") || null;
+        let selectedCourseId = null;
+        let myEnrollments = [];
+        let allCourses = [];
+        let adminData = null;
+        let adminAccessKey = sessionStorage.getItem("adminAccessKey") || "";
+        let revealObserver = null;
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                maximumFractionDigits: 0
+            }).format(Number(value || 0));
+        }
+
+        function getInitials(name) {
+            return String(name || "")
+                .split(" ")
+                .filter(Boolean)
+                .slice(0, 2)
+                .map(part => part[0].toUpperCase())
+                .join("") || "U";
+        }
+
+        async function apiFetch(path, options = {}) {
+            const response = await fetch(`${API_URL}${path}`, options);
+            const contentType = response.headers.get("content-type") || "";
+            const payload = contentType.includes("application/json") ? await response.json() : null;
+            if (!response.ok) {
+                const detail = payload?.detail || payload?.message || "Request failed";
+                const error = new Error(detail);
+                error.status = response.status;
+                throw error;
+            }
+            return payload;
+        }
+
+        function showToast(message, type = "info") {
+            const toast = document.getElementById("toast");
+            const iconName = type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" : "fa-info-circle";
+            toast.className = `toast ${type}`;
+            toast.replaceChildren();
+
+            const icon = document.createElement("i");
+            icon.className = `fas ${iconName}`;
+            toast.appendChild(icon);
+            toast.appendChild(document.createTextNode(` ${message}`));
+
+            toast.classList.add("show");
+            window.clearTimeout(showToast.timeoutId);
+            showToast.timeoutId = window.setTimeout(() => toast.classList.remove("show"), 4000);
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add("active"); }
+        function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+        function openAuthModal() { openModal("authModal"); }
+
+        function switchTab(tab) {
+            document.querySelectorAll(".modal-tab").forEach(button => button.classList.remove("active"));
+            document.getElementById(`tab-${tab}`).classList.add("active");
+            document.getElementById("loginForm").classList.toggle("hidden", tab !== "login");
+            document.getElementById("registerForm").classList.toggle("hidden", tab === "login");
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById("userDropdown");
+            if (dropdown) dropdown.classList.toggle("active");
+        }
+
+        function closeDropdown() {
+            const dropdown = document.getElementById("userDropdown");
+            if (dropdown) dropdown.classList.remove("active");
+        }
+
+        function updateNavForUser() {
+            const navAuth = document.getElementById("navAuth");
+            if (!currentUser) {
+                navAuth.innerHTML = '<button class="nav-cta" onclick="openAuthModal()">Sign In</button>';
+                return;
+            }
+
+            const adminButton = currentUser.can_access_admin
+                ? '<button type="button" onclick="openAdminPanel()"><i class="fas fa-database"></i> Admin Data</button>'
+                : "";
+
+            navAuth.innerHTML = `
+                <div class="user-menu">
+                    <div class="user-avatar" onclick="toggleDropdown()">${escapeHtml(getInitials(currentUser.full_name))}</div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <p><strong>${escapeHtml(currentUser.full_name)}</strong><br><small>${escapeHtml(currentUser.email)}</small><br><small>ID: ${escapeHtml(currentUser.id)}</small></p>
+                        ${adminButton}
+                        <button type="button" onclick="openMyCourses()"><i class="fas fa-book"></i> My Courses</button>
+                        <button type="button" onclick="logout()" class="danger"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+                    </div>
+                </div>`;
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById("loginEmail").value.trim();
+            const password = document.getElementById("loginPassword").value;
+            const errorEl = document.getElementById("loginError");
+            errorEl.textContent = "";
+
+            try {
+                const data = await apiFetch("/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+                currentToken = data.access_token;
+                localStorage.setItem("token", currentToken);
+                await loadUser();
+                await loadMyEnrollments();
+                renderCourses();
+                closeModal("authModal");
+                showToast("Welcome back!", "success");
+            } catch (error) {
+                errorEl.textContent = error.message || "Login failed";
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById("regName").value.trim();
+            const email = document.getElementById("regEmail").value.trim();
+            const password = document.getElementById("regPassword").value;
+            const errorEl = document.getElementById("registerError");
+            errorEl.textContent = "";
+
+            try {
+                const created = await apiFetch("/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password, full_name: name })
+                });
+                const login = await apiFetch("/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+                currentToken = login.access_token;
+                localStorage.setItem("token", currentToken);
+                await loadUser();
+                await loadMyEnrollments();
+                renderCourses();
+                closeModal("authModal");
+                showToast(`Account created. Your ID is ${created.id}.`, "success");
+            } catch (error) {
+                errorEl.textContent = error.message || "Registration failed";
+            }
+        }
+
+        async function loadUser() {
+            if (!currentToken) {
+                currentUser = null;
+                updateNavForUser();
+                return;
+            }
+
+            try {
+                currentUser = await apiFetch("/auth/me", {
+                    headers: { Authorization: `Bearer ${currentToken}` }
+                });
+                updateNavForUser();
+            } catch (error) {
+                logout(false);
+            }
+        }
+
+        function logout(showMessage = true) {
+            currentToken = null;
+            currentUser = null;
+            myEnrollments = [];
+            adminData = null;
+            adminAccessKey = "";
+            localStorage.removeItem("token");
+            sessionStorage.removeItem("adminAccessKey");
+            updateNavForUser();
+            renderCourses();
+            closeDropdown();
+            if (showMessage) showToast("Signed out successfully", "info");
+        }
+
+        async function loadCourses() {
+            try {
+                allCourses = await apiFetch("/courses");
+            } catch (error) {
+                allCourses = [];
+                showToast("Could not load courses right now.", "error");
+            }
+        }
+
+        function renderCourses() {
+            const grid = document.getElementById("coursesGrid");
+            const enrolledIds = new Set(myEnrollments.map(item => item.course_id));
+
+            if (!allCourses.length) {
+                grid.innerHTML = '<div class="course-card"><div class="course-content"><h3>No courses available</h3><p>Please try again later.</p></div></div>';
+                return;
+            }
+
+            grid.innerHTML = allCourses.map((course, index) => {
+                const isEnrolled = enrolledIds.has(course.id);
+                const badge = course.badge ? `<span class="course-badge">${escapeHtml(course.badge)}</span>` : "";
+                const action = isEnrolled
+                    ? '<span class="btn-enrolled"><i class="fas fa-check"></i> Enrolled</span>'
+                    : `<button class="btn-enroll" type="button" data-course-id="${course.id}"><i class="fas fa-plus"></i> Enroll Now</button>`;
+
+                return `
+                    <div class="course-card reveal">
+                        <div class="course-image course-img-${(index % 6) + 1}">
+                            ${badge}
+                        </div>
+                        <div class="course-content">
+                            <h3>${escapeHtml(course.title)}</h3>
+                            <p>${escapeHtml(course.description)}</p>
+                            <div class="course-meta">
+                                <span><i class="fas fa-clock"></i> ${escapeHtml(course.duration)}</span>
+                                <span><i class="fas fa-signal"></i> ${escapeHtml(course.level)}</span>
+                                <span class="course-price">${formatCurrency(course.price)}</span>
+                            </div>
+                            <div style="margin-top:15px">${action}</div>
+                        </div>
+                    </div>`;
+            }).join("");
+
+            grid.querySelectorAll("[data-course-id]").forEach(button => {
+                button.addEventListener("click", () => {
+                    const course = allCourses.find(item => item.id === Number(button.dataset.courseId));
+                    if (course) openEnrollModal(course.id, course.title, course.price);
+                });
+            });
+
+            initReveal();
+        }
+
+        async function loadMyEnrollments() {
+            if (!currentToken) {
+                myEnrollments = [];
+                return;
+            }
+
+            try {
+                myEnrollments = await apiFetch("/purchases", {
+                    headers: { Authorization: `Bearer ${currentToken}` }
+                });
+            } catch (error) {
+                myEnrollments = [];
+                console.error("Enrollment load error", error);
+            }
+        }
+
+        function openEnrollModal(id, title, price) {
+            selectedCourseId = id;
+            document.getElementById("enrollCourseTitle").textContent = title;
+            document.getElementById("enrollCoursePrice").textContent = formatCurrency(price);
+            document.getElementById("enrollError").textContent = "";
+            document.getElementById("enrollLoginPrompt").classList.add("hidden");
+            document.getElementById("enrollConfirm").classList.add("hidden");
+            document.getElementById("enrollSuccess").classList.add("hidden");
+
+            if (!currentToken) {
+                document.getElementById("enrollLoginPrompt").classList.remove("hidden");
+            } else {
+                document.getElementById("enrollConfirm").classList.remove("hidden");
+            }
+
+            openModal("enrollModal");
+        }
+
+        async function confirmEnrollment() {
+            const errorEl = document.getElementById("enrollError");
+            errorEl.textContent = "";
+
+            try {
+                await apiFetch("/purchases", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({ course_id: selectedCourseId })
+                });
+                document.getElementById("enrollConfirm").classList.add("hidden");
+                document.getElementById("enrollSuccess").classList.remove("hidden");
+                await loadMyEnrollments();
+                renderCourses();
+                showToast("Course purchased successfully.", "success");
+            } catch (error) {
+                errorEl.textContent = error.message || "Enrollment failed.";
+            }
+        }
+
+        function openMyCourses() {
+            const list = document.getElementById("myCoursesList");
+            if (!myEnrollments.length) {
+                list.innerHTML = '<p style="text-align:center;padding:40px;color:rgba(255,255,255,0.4)">You haven\'t enrolled in any courses yet.</p>';
+            } else {
+                list.innerHTML = myEnrollments.map(enrollment => {
+                    const course = allCourses.find(item => item.id === enrollment.course_id) || { title: "Unknown Course", duration: "N/A" };
+                    const progress = Math.max(0, Math.min(100, Number(enrollment.progress || 0)));
+                    return `
+                        <div class="my-course-card">
+                            <div class="my-course-header">
+                                <h4>${escapeHtml(course.title)}</h4>
+                                <span class="status status-active">Active</span>
+                            </div>
+                            <p style="font-size:13px;color:rgba(255,255,255,0.6)">Access duration: ${escapeHtml(course.duration)}</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width:${progress}%"></div>
+                            </div>
+                            <div class="progress-text">${progress}% Complete</div>
+                        </div>`;
+                }).join("");
+            }
+
+            openModal("myCoursesModal");
+            closeDropdown();
+        }
+
+        function renderAdminTable(title, rows, columns) {
+            if (!rows.length) {
+                return `<div style="margin-top:20px"><h4 style="margin-bottom:10px">${escapeHtml(title)}</h4><p style="color:rgba(255,255,255,0.6)">No records found.</p></div>`;
+            }
+
+            const header = columns.map(column => `<th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.12)">${escapeHtml(column.label)}</th>`).join("");
+            const body = rows.map(row => `
+                <tr>
+                    ${columns.map(column => `<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.08);vertical-align:top">${escapeHtml(row[column.key] ?? "")}</td>`).join("")}
+                </tr>
+            `).join("");
+
+            return `
+                <div style="margin-top:24px">
+                    <h4 style="margin-bottom:10px">${escapeHtml(title)}</h4>
+                    <div style="overflow:auto;border:1px solid rgba(255,255,255,0.08);border-radius:14px">
+                        <table style="width:100%;border-collapse:collapse;font-size:14px">
+                            <thead><tr>${header}</tr></thead>
+                            <tbody>${body}</tbody>
+                        </table>
+                    </div>
+                </div>`;
+        }
+
+        function renderAdminData() {
+            const content = document.getElementById("adminDataContent");
+            if (!adminData) {
+                content.innerHTML = '<p style="color:rgba(255,255,255,0.6)">No data loaded.</p>';
+                return;
+            }
+
+            content.innerHTML = `
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">
+                    <div class="my-course-card"><strong>Users</strong><div style="margin-top:8px;font-size:28px">${escapeHtml(adminData.counts.users)}</div></div>
+                    <div class="my-course-card"><strong>Purchases</strong><div style="margin-top:8px;font-size:28px">${escapeHtml(adminData.counts.purchases)}</div></div>
+                    <div class="my-course-card"><strong>Enrollments</strong><div style="margin-top:8px;font-size:28px">${escapeHtml(adminData.counts.enrollments)}</div></div>
+                    <div class="my-course-card"><strong>Inquiries</strong><div style="margin-top:8px;font-size:28px">${escapeHtml(adminData.counts.inquiries)}</div></div>
+                </div>
+                ${renderAdminTable("Users", adminData.users, [
+                    { key: "id", label: "ID" },
+                    { key: "full_name", label: "Name" },
+                    { key: "email", label: "Email" },
+                    { key: "role", label: "Role" },
+                    { key: "created_at", label: "Created" }
+                ])}
+                ${renderAdminTable("Purchases", adminData.purchases, [
+                    { key: "id", label: "ID" },
+                    { key: "full_name", label: "User" },
+                    { key: "email", label: "Email" },
+                    { key: "course_title", label: "Course" },
+                    { key: "amount_paid", label: "Amount" },
+                    { key: "payment_status", label: "Status" },
+                    { key: "purchased_at", label: "Purchased" }
+                ])}
+                ${renderAdminTable("Enrollments", adminData.enrollments, [
+                    { key: "id", label: "ID" },
+                    { key: "full_name", label: "User" },
+                    { key: "course_title", label: "Course" },
+                    { key: "status", label: "Status" },
+                    { key: "progress", label: "Progress" },
+                    { key: "enrolled_at", label: "Enrolled" }
+                ])}
+                ${renderAdminTable("Inquiries", adminData.inquiries, [
+                    { key: "id", label: "ID" },
+                    { key: "name", label: "Name" },
+                    { key: "email", label: "Email" },
+                    { key: "subject", label: "Subject" },
+                    { key: "status", label: "Status" },
+                    { key: "created_at", label: "Created" }
+                ])}`;
+        }
+
+        async function openAdminPanel() {
+            if (!currentUser || !currentUser.can_access_admin) {
+                showToast("Owner access required.", "error");
+                return;
+            }
+
+            if (!adminAccessKey) {
+                const enteredKey = window.prompt("Enter admin access key");
+                if (!enteredKey) return;
+                adminAccessKey = enteredKey.trim();
+                sessionStorage.setItem("adminAccessKey", adminAccessKey);
+            }
+
+            const content = document.getElementById("adminDataContent");
+            content.innerHTML = '<p style="color:rgba(255,255,255,0.6)">Loading admin data...</p>';
+            openModal("adminModal");
+            closeDropdown();
+
+            try {
+                adminData = await apiFetch("/admin/data", {
+                    headers: {
+                        Authorization: `Bearer ${currentToken}`,
+                        "X-Admin-Key": adminAccessKey
+                    }
+                });
+                renderAdminData();
+            } catch (error) {
+                if (error.status === 403) {
+                    adminAccessKey = "";
+                    sessionStorage.removeItem("adminAccessKey");
+                }
+                content.innerHTML = `<p class="form-error">${escapeHtml(error.message || "Failed to load admin data.")}</p>`;
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const stats = await apiFetch("/stats");
+                document.getElementById("statStudents").textContent = `${Number(stats.students || 0).toLocaleString()}+`;
+                document.getElementById("statCourses").textContent = `${Number(stats.courses || 0)}+`;
+                document.getElementById("statSatisfaction").textContent = `${Number(stats.satisfaction || 0)}%`;
+            } catch (error) {
+                console.error("Stats load error", error);
+            }
+        }
+
+        async function loadTestimonials() {
+            const grid = document.getElementById("testimonialsGrid");
+            try {
+                const testimonials = await apiFetch("/testimonials?limit=3");
+                if (!testimonials.length) {
+                    grid.innerHTML = '<div class="testimonial-card reveal"><p class="testimonial-text">No testimonials available yet.</p></div>';
+                    return;
+                }
+
+                grid.innerHTML = testimonials.map(item => `
+                    <article class="testimonial-card reveal">
+                        <div class="testimonial-stars">${"&#9733;".repeat(Number(item.rating || 5))}</div>
+                        <p class="testimonial-text">${escapeHtml(item.content)}</p>
+                        <div class="testimonial-author">
+                            <strong>${escapeHtml(item.name)}</strong><br>
+                            <small>${escapeHtml(item.role)}</small>
+                        </div>
+                    </article>`).join("");
+                initReveal();
+            } catch (error) {
+                grid.innerHTML = '<div class="testimonial-card reveal"><p class="testimonial-text">Testimonials are temporarily unavailable.</p></div>';
+            }
+        }
+
+        function initReveal() {
+            if (!revealObserver) {
+                revealObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) entry.target.classList.add("active");
+                    });
+                }, { threshold: 0.1 });
+            }
+
+            document.querySelectorAll(".reveal").forEach(element => {
+                if (element.dataset.revealBound === "true") return;
+                element.dataset.revealBound = "true";
+                revealObserver.observe(element);
+            });
+        }
+
+        window.addEventListener("scroll", () => {
+            const nav = document.getElementById("navbar");
+            nav.classList.toggle("scrolled", window.scrollY > 50);
+        });
+
+        document.addEventListener("click", (event) => {
+            const dropdown = document.getElementById("userDropdown");
+            const avatar = document.querySelector(".user-avatar");
+            if (dropdown && avatar && !dropdown.contains(event.target) && !avatar.contains(event.target)) {
+                dropdown.classList.remove("active");
+            }
+        });
+
+        window.onclick = function (event) {
+            if (event.target.classList.contains("modal-overlay")) {
+                event.target.classList.remove("active");
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            updateNavForUser();
+            initReveal();
+            await loadUser();
+            await Promise.all([loadCourses(), loadStats(), loadTestimonials(), loadMyEnrollments()]);
+            renderCourses();
+        });
+    </script>
+</body>
+
+</html>
